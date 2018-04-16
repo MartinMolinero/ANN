@@ -24,7 +24,7 @@ class Perceptron
   end
 
   def first_weights(d)
-    for i in 0..d-1
+    for i in 0..d
       @weights.push(rand)
     end
   end
@@ -46,7 +46,6 @@ class Perceptron
       end
       step += 1
       if error == 0
-        puts "entered error 0"
         return @weights
       end
     end
@@ -60,7 +59,7 @@ class Perceptron
   end
 
   def evaluate(test_samples)
-    puts "samples #{test_samples}"
+    #puts "samples #{test_samples}"
     test_samples.each do |t|
       t = t.split(',')
       temp_out = get_output(t, @weights)
@@ -127,6 +126,7 @@ def row_to_inputs_out(set, d)
   set.each do |row|
     a = row.gsub(' ','').split(',')
     inp = []
+    inp.push(1)
     for i in 0..d-1
       inp.push(a[i])
     end
@@ -148,13 +148,13 @@ n = input[2].to_i
 training_samples =  get_samples(input, 3 ,m)[0]
 last = get_samples(input, 3 ,m)[1]
 hash_in_out = row_to_inputs_out(training_samples, d)
-p = Perceptron.new(d, 0.5)
-temp_w = p.train(hash_in_out, 30)
-puts "test"
+p = Perceptron.new(d, 0.1)
+temp_w = p.train(hash_in_out, 10000)
+#puts "test"
 test_samples =  get_samples(input, last, n)[0]
-puts "temp_w #{temp_w.nil?}"
+#puts "temp_w #{temp_w.nil?}"
 if temp_w
   p.evaluate(test_samples)
 else
-  puts "No solution found"
+  puts "no solution found"
 end
