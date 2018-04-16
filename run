@@ -1,0 +1,3 @@
+#!/bin/sh
+ruby ann.rb
+input = $stdin.readlines
