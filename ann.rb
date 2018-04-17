@@ -104,33 +104,6 @@ def get_samples(input, first, n_m)
   [set, start]
 end
 
-=begin
-# just in case i need to change something in the future
-def get_training_examples(input,m)
-  start = 3
-  last = start + m
-  training = []
-  while start < last do
-    input[start] = input[start].chomp
-    training.push(input[start])
-    start =  start + 1
-  end
-  [training,start]
-end
-
-def get_test_examples(input, last, n)
-  start = last
-  ending =start + n
-  tests = []
-  while start < ending do
-    input[start] = input[start].chomp
-    tests.push(input[start])
-    start =  start + 1
-  end
-  tests
-end
-=end
-
 def row_to_inputs_out(set, d)
   @input_output = Hash.new
   set.each do |row|
@@ -158,8 +131,8 @@ n = input[2].to_i
 training_samples =  get_samples(input, 3 ,m)[0]
 last = get_samples(input, 3 ,m)[1]
 hash_in_out = row_to_inputs_out(training_samples, d)
-p = Perceptron.new(d, 0.01)
-temp_w = p.train(hash_in_out, 10)
+p = Perceptron.new(d, 0.03)
+temp_w = p.train(hash_in_out, 2000)
 #puts "test"
 test_samples =  get_samples(input, last, n)[0]
 #puts "temp_w #{temp_w.nil?}"
