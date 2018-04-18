@@ -27,26 +27,20 @@ class Perceptron
     for i in 0..d
       @weights.push(rand)
     end
-    #puts self.inspect
   end
 
   def train(hash, limit)
     step = 0
     while step < limit do
       error = 0
-      step += 1
       hash.each do |key, value|
         expected_output = value.to_i
-        #puts "\nexpected_output #{expected_output}"
         inm = key
         output = get_output(inm, @weights)
-
-        #puts "output #{output}"
-        #puts "error #{error}"
         error += (expected_output - output).abs
-        #puts "change_weights #{inm}"
         @weights = change_weights(inm, expected_output, output)
       end
+      step += 1
       if error == 0
         return @weights
       end
@@ -55,43 +49,42 @@ class Perceptron
 
   def change_weights(inputs, expected_output, actual_output)
     @weights.each_with_index do |w, i|
-      #puts "old weight #{@weights[i]} + #{@learning_rate} * (#{expected_output} - #{actual_output}) * #{inputs[i].to_f}"
       @weights[i] = @weights[i] + @learning_rate * (expected_output - actual_output) * inputs[i].to_f
-      #puts "new weight #{@weights[i]}"
     end
     return @weights
   end
 
   def evaluate(test_samples)
-    #puts "samples #{test_samples}"
     test_samples.each do |t|
       t = t.split(',')
+      #this is what i was missing
       t.unshift(1)
-      #puts t
       temp_out = get_output(t, @weights)
       puts temp_out
     end
   end
 
+  def activation(evaluation, treshold)
+    val = 0
+    if evaluation <= treshold
+      val = 0
+    else
+      val = 1
+    end
+    val
+  end
+
   def get_output(inputs, weights)
     output = 0
     inputs.each_with_index do |input, i|
-      #puts "input #{input} weights #{weights[i]} i #{i}"
       output += input.to_f * weights[i]
     end
-    #puts "output #{output}"
-    if output <= 0
-      output =  0
-    else
-      output = 1
-    end
-    #puts "after activation function #{output}"
+    output = activation(output, 0)
     output
   end
 
 end
 
-#refactored
 def get_samples(input, first, n_m)
   start = first
   last = start + n_m
@@ -113,14 +106,11 @@ def row_to_inputs_out(set, d)
     for i in 0..d-1
       inp.push(a[i])
     end
-    #puts "inp #{inp}"
     out = a.last
-    #puts "out #{out}"
     h2 = {inp => out}
     @input_output.merge!(h2)
   end
   @input_output
-  #puts @input_output.inspect
 end
 
 input = $stdin.readlines
@@ -132,12 +122,9 @@ training_samples =  get_samples(input, 3 ,m)[0]
 last = get_samples(input, 3 ,m)[1]
 hash_in_out = row_to_inputs_out(training_samples, d)
 p = Perceptron.new(d, 0.03)
+test_samples = get_samples(input, last, n)[0]
 temp_w = p.train(hash_in_out, 2000)
-#puts "test"
-test_samples =  get_samples(input, last, n)[0]
-#puts "temp_w #{temp_w.nil?}"
 if temp_w
-
   p.evaluate(test_samples)
 else
   puts "no solution found"
